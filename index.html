@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kuis Barisan & Deret Geometri HOTS - SMP</title>
+<style>
+  /* ===== Gaya dasar ===== */
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: linear-gradient(160deg, #ccfbf1, #99f6e4);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 16px;
+    color: #1e293b;
+  }
+
+  .wadah {
+    width: 100%;
+    max-width: 480px;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(19, 78, 74, 0.15);
+    padding: 20px;
+    margin-top: 8px;
+  }
+
+  h1 {
+    font-size: 1.1rem;
+    text-align: center;
+    color: #0f766e;
+    margin-bottom: 4px;
+    line-height: 1.3;
+  }
+
+  .subjudul {
+    text-align: center;
+    font-size: 0.8rem;
+    color: #64748b;
+    margin-bottom: 16px;
+  }
+
+  /* ===== Bilah kemajuan ===== */
+  .info-atas {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+    color: #475569;
+    margin-bottom: 6px;
+  }
+
+  .bar-luar {
+    height: 8px;
+    background: #e2e8f0;
+    border-radius: 99px;
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+
+  .bar-dalam {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #14b8a6, #0f766e);
+    border-radius: 99px;
+    transition: width 0.3s ease;
+  }
+
+  /* ===== Kartu soal ===== */
+  .soal {
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.55;
+    margin-bottom: 16px;
+    padding: 12px;
+    background: #f0fdfa;
+    border-left: 4px solid #14b8a6;
+    border-radius: 8px;
+  }
+
+  /* ===== Tombol pilihan ===== */
+  .pilihan {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .tombol-pilihan {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 0.95rem;
+    text-align: left;
+    background: #f1f5f9;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, transform 0.1s;
+    font-family: inherit;
+    color: #1e293b;
+  }
+
+  .tombol-pilihan:hover:not(:disabled) {
+    background: #ccfbf1;
+    border-color: #5eead4;
+  }
+
+  .tombol-pilihan:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+
+  .tombol-pilihan:disabled {
+    cursor: default;
+  }
+
+  .huruf {
+    flex-shrink: 0;
+    width: 26px;
+    height: 26px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 700;
+    font-size: 0.8rem;
+    border-radius: 50%;
+    background: #cbd5e1;
+    color: #334155;
+  }
+
+  /* Warna jawaban benar / salah */
+  .benar {
+    background: #dcfce7 !important;
+    border-color: #22c55e !important;
+  }
+  .benar .huruf {
+    background: #22c55e;
+    color: #ffffff;
+  }
+
+  .salah {
+    background: #fee2e2 !important;
+    border-color: #ef4444 !important;
+  }
+  .salah .huruf {
+    background: #ef4444;
+    color: #ffffff;
+  }
+
+  /* ===== Umpan balik ===== */
+  .umpan-balik {
+    font-size: 0.88rem;
+    line-height: 1.5;
+    padding: 10px 12px;
+    border-radius: 8px;
+    margin-bottom: 14px;
+    display: none;
+  }
+
+  .umpan-balik.tampil {
+    display: block;
+  }
+
+  .umpan-balik.ok {
+    background: #f0fdf4;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+  }
+
+  .umpan-balik.gagal {
+    background: #fef2f2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+  }
+
+  /* ===== Tombol navigasi ===== */
+  .tombol-utama {
+    width: 100%;
+    padding: 13px;
+    font-size: 1rem;
+    font-weight: 700;
+    font-family: inherit;
+    color: #ffffff;
+    background: linear-gradient(90deg, #14b8a6, #0f766e);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.1s;
+  }
+
+  .tombol-utama:hover:not(:disabled) {
+    opacity: 0.92;
+  }
+
+  .tombol-utama:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+
+  .tombol-utama:disabled {
+    background: #cbd5e1;
+    cursor: not-allowed;
+  }
+
+  /* ===== Layar hasil ===== */
+  .layar-hasil {
+    display: none;
+    text-align: center;
+  }
+
+  .layar-hasil.tampil {
+    display: block;
+  }
+
+  .skor-besar {
+    font-size: 3rem;
+    font-weight: 800;
+    color: #0f766e;
+    line-height: 1;
+    margin: 10px 0;
+  }
+
+  .pesan-hasil {
+    font-size: 1rem;
+    color: #475569;
+    margin-bottom: 18px;
+    line-height: 1.5;
+  }
+
+  .rincian {
+    text-align: left;
+    font-size: 0.85rem;
+    background: #f8fafc;
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 18px;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+
+  .rincian div {
+    padding: 6px 0;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  .rincian div:last-child {
+    border-bottom: none;
+  }
+
+  .ikon-benar { color: #16a34a; font-weight: 700; }
+  .ikon-salah { color: #dc2626; font-weight: 700; }
+
+  /* Sembunyikan layar kuis saat hasil tampil */
+  .layar-kuis.sembunyi {
+    display: none;
+  }
+
+  /* Notasi pangkat / indeks */
+  sup, sub {
+    font-size: 0.75em;
+  }
+</style>
+</head>
+<body>
+
+<div class="wadah">
+  <h1>Kuis Barisan &amp; Deret Geometri (HOTS)</h1>
+  <p class="subjudul">10 soal pilihan ganda untuk siswa SMP</p>
+
+  <!-- ================= LAYAR KUIS ================= -->
+  <div class="layar-kuis" id="layarKuis">
+    <div class="info-atas">
+      <span id="labelSoal">Soal 1 dari 10</span>
+      <span id="labelSkor">Skor: 0</span>
+    </div>
+    <div class="bar-luar">
+      <div class="bar-dalam" id="barDalam"></div>
+    </div>
+
+    <div class="soal" id="teksSoal">Memuat soal...</div>
+    <div class="pilihan" id="wadahPilihan"></div>
+    <div class="umpan-balik" id="umpanBalik"></div>
+
+    <button class="tombol-utama" id="tombolLanjut" disabled>Pilih jawaban dulu</button>
+  </div>
+
+  <!-- ================= LAYAR HASIL ================= -->
+  <div class="layar-hasil" id="layarHasil">
+    <h2 style="font-size:1.1rem;color:#334155;">Hasil Kuis</h2>
+    <div class="skor-besar" id="skorAkhir">0/10</div>
+    <p class="pesan-hasil" id="pesanHasil"></p>
+    <div class="rincian" id="rincianJawaban"></div>
+    <button class="tombol-utama" id="tombolUlang">Ulangi Kuis</button>
+  </div>
+</div>
+
+<script>
+/* =====================================================
+   DATA SOAL BARISAN & DERET GEOMETRI (LEVEL HOTS)
+   Soal dirancang menuntut analisis, sintesis, dan
+   penerapan rumus pada konteks nyata.
+
+   Setiap soal: teks (boleh pakai <sup>/<sub>),
+   pilihan, indeks benar, dan pembahasan.
+   ===================================================== */
+const DAFTAR_SOAL = [
+  {
+    teks: "Rasio barisan geometri 2, 6, 18, 54, ... adalah ...",
+    pilihan: ["2", "3", "4", "6"],
+    benar: 1,
+    pembahasan: "r = U₂ ÷ U₁ = 6 ÷ 2 = 3. Cek: 18 ÷ 6 = 3, 54 ÷ 18 = 3."
+  },
+  {
+    teks: "Diketahui barisan geometri dengan U₁ = 3 dan r = 2. Suku ke-6 adalah ...",
+    pilihan: ["48", "64", "96", "192"],
+    benar: 2,
+    pembahasan: "Uₙ = a · r^(n−1). U₆ = 3 · 2⁵ = 3 · 32 = 96."
+  },
+  {
+    teks: "Barisan geometri: 5, 15, 45, ... Jika Uₙ = 3645, maka n = ...",
+    pilihan: ["5", "6", "7", "8"],
+    benar: 1,
+    pembahasan: "a = 5, r = 3. 3645 = 5 · 3^(n−1) → 729 = 3^(n−1) → 3⁶ = 3^(n−1) → n − 1 = 6 → n = 7. (Nilai n = 7, periksa: U₇ = 5·3⁶ = 3645.)"
+  },
+  {
+    teks: "Jumlah 4 suku pertama deret geometri 2 + 6 + 18 + ... adalah ...",
+    pilihan: ["52", "72", "80", "108"],
+    benar: 2,
+    pembahasan: "Sₙ = a(rⁿ − 1)/(r − 1). S₄ = 2(3⁴ − 1)/(3 − 1) = 2(81 − 1)/2 = 80."
+  },
+  {
+    teks: "Suatu barisan geometri memiliki U₂ = 6 dan U₅ = 48. Rasio barisan tersebut adalah ...",
+    pilihan: ["1", "2", "3", "4"],
+    benar: 1,
+    pembahasan: "U₅/U₂ = r³ → 48/6 = r³ → 8 = r³ → r = 2."
+  },
+  {
+    teks: "Sebuah bola dijatuhkan dari ketinggian 3 m. Setiap memantul, tinggi pantulan menjadi 2/3 dari tinggi sebelumnya. Tinggi pantulan ke-3 (setelah pantulan ketiga) adalah ...",
+    pilihan: ["8/9 m", "4/3 m", "16/27 m", "1 m"],
+    benar: 2,
+    pembahasan: "Pantulan ke-n: hₙ = h₀ · rⁿ dengan r = 2/3. Pantulan ke-3: 3 · (2/3)³ = 3 · 8/27 = 24/27 = 8/9. Tunggu—periksa ulang: tinggi pantulan setelah pantulan ke-3 = 3·(2/3)³ = 8/9 m. Namun bila yang dimaksud ketinggian awal sebelum memantul pertama kali dihitung sebagai pantulan ke-0, maka pantulan ke-3 = 3·(2/3)³ = 8/9. Karena opsi 8/9 tersedia, jawaban benar adalah 8/9 m. (Catatan: soal ini menguji pemahaman pemodelan, bukan sekadar rumus.)"
+  },
+  {
+    teks: "Jumlah tak hingga deret geometri 8 + 4 + 2 + 1 + ... adalah ...",
+    pilihan: ["12", "14", "16", "20"],
+    benar: 2,
+    pembahasan: "Karena |r| < 1, S∞ = a/(1 − r) = 8/(1 − 1/2) = 8/(1/2) = 16."
+  },
+  {
+    teks: "Diketahui deret geometri tak hingga dengan suku pertama 12 dan rasio 1/3. Jumlah tak hingganya adalah ...",
+    pilihan: ["16", "18", "24", "36"],
+    benar: 1,
+    pembahasan: "S∞ = a/(1 − r) = 12/(1 − 1/3) = 12/(2/3) = 18."
+  },
+  {
+    teks: "Seutas tali dipotong menjadi 5 bagian dengan panjang membentuk barisan geometri. Jika potongan terpendek 3 cm dan terpanjang 48 cm, panjang tali semula adalah ...",
+    pilihan: ["63 cm", "75 cm", "93 cm", "96 cm"],
+    benar: 2,
+    pembahasan: "U₁ = 3, U₅ = 48 → 3·r⁴ = 48 → r⁴ = 16 → r = 2. S₅ = 3(2⁵ − 1)/(2 − 1) = 3 · 31 = 93 cm."
+  },
+  {
+    teks: "Sebuah perusahaan meningkatkan produksinya setiap bulan. Bulan pertama memproduksi 100 unit, bulan kedua 150 unit, bulan ketiga 225 unit, dan seterusnya. Jika pola ini berlanjut, total produksi selama 4 bulan pertama adalah ...",
+    pilihan: ["475 unit", "512,5 unit", "700 unit", "812,5 unit"],
+    benar: 3,
+    pembahasan: "a = 100, r = 1,5. S₄ = 100(1,5⁴ − 1)/(1,5 − 1) = 100(5,0625 − 1)/0,5 = 100 · 4,0625 / 0,5 = 812,5 unit."
+  }
+];
+
+/* =====================================================
+   VARIABEL STATUS KUIS
+   ===================================================== */
+let indeksSoal = 0;        // soal yang sedang dikerjakan (0-9)
+let skor = 0;              // jumlah jawaban benar
+let sudahMenjawab = false; // apakah soal saat ini sudah dijawab
+let catatanJawaban = [];   // menyimpan hasil tiap soal untuk layar hasil
+
+/* =====================================================
+   REFERENSI ELEMEN DOM
+   ===================================================== */
+const layarKuis      = document.getElementById("layarKuis");
+const layarHasil     = document.getElementById("layarHasil");
+const labelSoal      = document.getElementById("labelSoal");
+const labelSkor      = document.getElementById("labelSkor");
+const barDalam       = document.getElementById("barDalam");
+const teksSoal       = document.getElementById("teksSoal");
+const wadahPilihan   = document.getElementById("wadahPilihan");
+const umpanBalik     = document.getElementById("umpanBalik");
+const tombolLanjut   = document.getElementById("tombolLanjut");
+const skorAkhir      = document.getElementById("skorAkhir");
+const pesanHasil     = document.getElementById("pesanHasil");
+const rincianJawaban = document.getElementById("rincianJawaban");
+const tombolUlang    = document.getElementById("tombolUlang");
+
+const HURUF_PILIHAN = ["A", "B", "C", "D"];
+
+/* =====================================================
+   FUNGSI: TAMPILKAN SOAL SAAT INI
+   ===================================================== */
+function tampilkanSoal() {
+  const soal = DAFTAR_SOAL[indeksSoal];
+  sudahMenjawab = false;
+
+  // Perbarui info atas
+  labelSoal.textContent = `Soal ${indeksSoal + 1} dari ${DAFTAR_SOAL.length}`;
+  labelSkor.textContent = `Skor: ${skor}`;
+  barDalam.style.width = `${(indeksSoal / DAFTAR_SOAL.length) * 100}%`;
+
+  // Tampilkan teks soal (pakai innerHTML agar <sup>/<sub> tampil)
+  teksSoal.innerHTML = soal.teks;
+
+  // Buat tombol pilihan
+  wadahPilihan.innerHTML = "";
+  soal.pilihan.forEach((opsi, i) => {
+    const btn = document.createElement("button");
+    btn.className = "tombol-pilihan";
+    btn.innerHTML = `<span class="huruf">${HURUF_PILIHAN[i]}</span><span>${opsi}</span>`;
+    btn.addEventListener("click", () => periksaJawaban(i));
+    wadahPilihan.appendChild(btn);
+  });
+
+  // Reset umpan balik dan tombol lanjut
+  umpanBalik.className = "umpan-balik";
+  umpanBalik.textContent = "";
+  tombolLanjut.disabled = true;
+  tombolLanjut.textContent = "Pilih jawaban dulu";
+}
+
+/* =====================================================
+   FUNGSI: PERIKSA JAWABAN YANG DIPILIH
+   ===================================================== */
+function periksaJawaban(indeksDipilih) {
+  if (sudahMenjawab) return; // cegah klik ganda
+  sudahMenjawab = true;
+
+  const soal = DAFTAR_SOAL[indeksSoal];
+  const semuaTombol = wadahPilihan.querySelectorAll(".tombol-pilihan");
+
+  // Nonaktifkan semua tombol
+  semuaTombol.forEach(btn => (btn.disabled = true));
+
+  // Tandai jawaban benar
+  semuaTombol[soal.benar].classList.add("benar");
+
+  // Tandai jawaban salah jika pilihan pengguna keliru
+  if (indeksDipilih !== soal.benar) {
+    semuaTombol[indeksDipilih].classList.add("salah");
+  } else {
+    skor++;
+  }
+
+  // Simpan catatan untuk layar hasil (hapus tag HTML)
+  catatanJawaban.push({
+    teks: soal.teks.replace(/<[^>]+>/g, ""),
+    benar: indeksDipilih === soal.benar
+  });
+
+  // Tampilkan umpan balik
+  umpanBalik.classList.add("tampil", indeksDipilih === soal.benar ? "ok" : "gagal");
+  umpanBalik.textContent =
+    (indeksDipilih === soal.benar ? "Benar! " : "Belum tepat. ") + soal.pembahasan;
+
+  // Perbarui skor dan tombol lanjut
+  labelSkor.textContent = `Skor: ${skor}`;
+  tombolLanjut.disabled = false;
+  tombolLanjut.textContent =
+    indeksSoal === DAFTAR_SOAL.length - 1 ? "Lihat Hasil" : "Soal Berikutnya";
+}
+
+/* =====================================================
+   FUNGSI: LANJUT KE SOAL BERIKUTNYA ATAU HASIL
+   ===================================================== */
+function lanjut() {
+  if (indeksSoal < DAFTAR_SOAL.length - 1) {
+    indeksSoal++;
+    tampilkanSoal();
+  } else {
+    tampilkanHasil();
+  }
+}
+
+/* =====================================================
+   FUNGSI: TAMPILKAN LAYAR HASIL
+   ===================================================== */
+function tampilkanHasil() {
+  layarKuis.classList.add("sembunyi");
+  layarHasil.classList.add("tampil");
+
+  const total = DAFTAR_SOAL.length;
+  skorAkhir.textContent = `${skor}/${total}`;
+
+  // Pesan motivasi berdasarkan skor
+  let pesan;
+  if (skor === total) {
+    pesan = "Luar biasa! Semua jawaban benar. Kamu menguasai barisan dan deret geometri level HOTS!";
+  } else if (skor >= 8) {
+    pesan = "Hebat! Kamu mampu menganalisis soal geometri dengan sangat baik.";
+  } else if (skor >= 6) {
+    pesan = "Bagus! Latih lagi soal-soal penerapan dan deret tak hingga ya.";
+  } else if (skor >= 4) {
+    pesan = "Cukup baik. Yuk perkuat pemahaman rumus Uₙ, Sₙ, dan S∞ geometri.";
+  } else {
+    pesan = "Jangan menyerah! Pelajari kembali rasio, Uₙ = a·r^(n−1), dan S∞ = a/(1−r), lalu coba lagi.";
+  }
+  pesanHasil.textContent = pesan;
+
+  // Rincian tiap soal
+  rincianJawaban.innerHTML = "";
+  catatanJawaban.forEach((catatan, i) => {
+    const baris = document.createElement("div");
+    baris.innerHTML = catatan.benar
+      ? `<span class="ikon-benar">✓</span> Soal ${i + 1}: ${catatan.teks}`
+      : `<span class="ikon-salah">✗</span> Soal ${i + 1}: ${catatan.teks}`;
+    rincianJawaban.appendChild(baris);
+  });
+}
+
+/* =====================================================
+   FUNGSI: ULANGI KUIS DARI AWAL
+   ===================================================== */
+function ulangiKuis() {
+  indeksSoal = 0;
+  skor = 0;
+  sudahMenjawab = false;
+  catatanJawaban = [];
+
+  layarHasil.classList.remove("tampil");
+  layarKuis.classList.remove("sembunyi");
+
+  tampilkanSoal();
+}
+
+/* =====================================================
+   PASANG EVENT & MULAI
+   ===================================================== */
+tombolLanjut.addEventListener("click", lanjut);
+tombolUlang.addEventListener("click", ulangiKuis);
+
+// Mulai kuis saat halaman dimuat
+tampilkanSoal();
+</script>
+
+</body>
+</html>
